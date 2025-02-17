@@ -1,0 +1,72 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: number 4
+      id: number-4
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: number 4
+        setup-command: gcc -o doubleSymbols doubleSymbols.c
+        command: "./doubleSymbols"
+        input: '4'
+        expected-output: "*+*+"
+        comparison-method: exact
+        timeout: 10
+        max-score: 5
+    - name: number 8
+      id: number-8
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: number 8
+        setup-command: gcc -o doubleSymbols doubleSymbols.c
+        command: "./doubleSymbols"
+        input: '8'
+        expected-output: "*+*+*+*+"
+        comparison-method: exact
+        timeout: 10
+        max-score: 5
+    - name: number 12
+      id: number-12
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: number 12
+        setup-command: gcc -o doubleSymbols doubleSymbols.c
+        command: "./doubleSymbols"
+        input: '12'
+        expected-output: "*+*+*+*+*+*+"
+        comparison-method: exact
+        timeout: 10
+        max-score: 5
+    - name: Odd number
+      id: odd-number
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Odd number
+        setup-command: gcc -o doubleSymbols doubleSymbols.c
+        command: "./doubleSymbols"
+        input: '5'
+        expected-output: Wrong input
+        comparison-method: exact
+        timeout: 10
+        max-score: 5
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        NUMBER-4_RESULTS: "${{steps.number-4.outputs.result}}"
+        NUMBER-8_RESULTS: "${{steps.number-8.outputs.result}}"
+        NUMBER-12_RESULTS: "${{steps.number-12.outputs.result}}"
+        ODD-NUMBER_RESULTS: "${{steps.odd-number.outputs.result}}"
+      with:
+        runners: number-4,number-8,number-12,odd-number
